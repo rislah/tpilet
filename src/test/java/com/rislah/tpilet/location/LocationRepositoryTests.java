@@ -1,5 +1,7 @@
 package com.rislah.tpilet.location;
 
+import com.rislah.tpilet.model.Location;
+import com.rislah.tpilet.repository.LocationRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

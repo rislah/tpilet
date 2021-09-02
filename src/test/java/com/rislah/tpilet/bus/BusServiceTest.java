@@ -1,6 +1,10 @@
 package com.rislah.tpilet.bus;
 
+import com.rislah.tpilet.dto.BusDto;
 import com.rislah.tpilet.error.RecordAlreadyExistsException;
+import com.rislah.tpilet.model.Bus;
+import com.rislah.tpilet.repository.BusRepository;
+import com.rislah.tpilet.service.BusService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,19 +23,20 @@ public class BusServiceTest {
 
     @Test
     void testAddBusIfBusAlreadyExists() {
-        Bus bus = getBus();
+        BusDto bus = getBusDto();
         when(busRepository.existsBusByNumber(bus.getNumber())).thenReturn(true);
         assertThrows(RecordAlreadyExistsException.class, () -> {
-            busService.addBus(bus);
+            busService.create(bus);
         });
     }
 
-    private Bus getBus() {
-        return Bus.builder()
+    private BusDto getBusDto() {
+        return BusDto.builder()
                 .ac(true)
                 .number(213123)
                 .wc(true)
                 .wifi(true)
                 .build();
     }
+
 }

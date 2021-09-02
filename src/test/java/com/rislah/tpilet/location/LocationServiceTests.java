@@ -1,7 +1,11 @@
 package com.rislah.tpilet.location;
 
-import com.rislah.tpilet.location.exceptions.LocationExistsException;
-import com.rislah.tpilet.location.exceptions.LocationNotFoundException;
+import com.rislah.tpilet.dto.LocationDto;
+import com.rislah.tpilet.exception.LocationExistsException;
+import com.rislah.tpilet.exception.LocationNotFoundException;
+import com.rislah.tpilet.model.Location;
+import com.rislah.tpilet.repository.LocationRepository;
+import com.rislah.tpilet.service.LocationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,10 +27,10 @@ public class LocationServiceTests {
 
     @Test
     public void testAddLocationsIfLocationExists() {
-        Location location = getLocation();
+        LocationDto location = getLocationDto();
         when(locationRepository.existsByName(location.getName())).thenReturn(true);
         assertThrows(LocationExistsException.class, () -> {
-            locationService.addLocation(location);
+            locationService.create(location);
         });
     }
 
@@ -34,12 +38,12 @@ public class LocationServiceTests {
     void testGetAllLocationsIfNotFound() {
         when(locationRepository.findAll()).thenReturn(new ArrayList<>());
         assertThrows(LocationNotFoundException.class, () -> {
-            locationService.getAllLocations();
+            locationService.findAll();
         });
     }
 
-    private Location getLocation() {
-        return Location.builder()
+    private LocationDto getLocationDto() {
+        return LocationDto.builder()
                 .name("Tartu bussijaam")
                 .build();
     }

@@ -19,7 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.ArrayList;
 import java.util.List;
 
-@ControllerAdvice
+//@ControllerAdvice
 @Slf4j
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
@@ -27,32 +27,32 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                                                                           HttpHeaders headers, HttpStatus status,
                                                                           WebRequest request) {
         String error = ex.getParameterName() + " parameter is missing";
-        CustomJsonError customJsonError = new CustomJsonError(HttpStatus.BAD_REQUEST, error, ex);
-        return buildError(customJsonError);
+        CustomErrorResponse customErrorResponse = new CustomErrorResponse(HttpStatus.BAD_REQUEST, error, ex);
+        return buildError(customErrorResponse);
     }
 
     @Override
     protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        CustomJsonError customJsonError = new CustomJsonError(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Media type is not supported", ex);
-        return buildError(customJsonError);
+        CustomErrorResponse customErrorResponse = new CustomErrorResponse(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Media type is not supported", ex);
+        return buildError(customErrorResponse);
     }
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        CustomJsonError customJsonError = new CustomJsonError(HttpStatus.BAD_REQUEST, "Malformed request", ex);
-        return buildError(customJsonError);
+        CustomErrorResponse customErrorResponse = new CustomErrorResponse(HttpStatus.BAD_REQUEST, "Malformed request", ex);
+        return buildError(customErrorResponse);
     }
 
     @Override
     protected ResponseEntity<Object> handleMissingPathVariable(MissingPathVariableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        CustomJsonError customJsonError = new CustomJsonError(HttpStatus.BAD_REQUEST, ex.getMessage());
-        return buildError(customJsonError);
+        CustomErrorResponse customErrorResponse = new CustomErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return buildError(customErrorResponse);
     }
 
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        CustomJsonError customJsonError = new CustomJsonError(HttpStatus.BAD_REQUEST, ex.getMessage());
-        return buildError(customJsonError);
+        CustomErrorResponse customErrorResponse = new CustomErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return buildError(customErrorResponse);
     }
 
     @Override
@@ -61,30 +61,30 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
             validationErrors.add(new ValidationError(fieldError.getField(), fieldError.getDefaultMessage()));
         }
-        CustomJsonError customJsonError = new CustomJsonError(HttpStatus.BAD_REQUEST, "Validation Error", validationErrors);
-        return buildError(customJsonError);
+        CustomErrorResponse customErrorResponse = new CustomErrorResponse(HttpStatus.BAD_REQUEST, "Validation Error", validationErrors);
+        return buildError(customErrorResponse);
     }
 
     @ExceptionHandler(RecordAlreadyExistsException.class)
     public ResponseEntity<Object> handleRecordAlreadyExists(RecordAlreadyExistsException ex) {
-        CustomJsonError customJsonError = new CustomJsonError(HttpStatus.CONFLICT, ex.getMessage());
-        return buildError(customJsonError);
+        CustomErrorResponse customErrorResponse = new CustomErrorResponse(HttpStatus.CONFLICT, ex.getMessage());
+        return buildError(customErrorResponse);
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> handleNotFound(NotFoundException ex) {
-        CustomJsonError customJsonError = new CustomJsonError(HttpStatus.NOT_FOUND, ex.getMessage());
-        return buildError(customJsonError);
+        CustomErrorResponse customErrorResponse = new CustomErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+        return buildError(customErrorResponse);
     }
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
-        CustomJsonError customJsonError = new CustomJsonError(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error");
+        CustomErrorResponse customErrorResponse = new CustomErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error");
         log.error(ex.getMessage());
-        return buildError(customJsonError);
+        return buildError(customErrorResponse);
     }
 
-    public ResponseEntity<Object> buildError(CustomJsonError customJsonError) {
-        return new ResponseEntity<>(customJsonError, customJsonError.getStatus());
+    public ResponseEntity<Object> buildError(CustomErrorResponse customErrorResponse) {
+        return new ResponseEntity<>(customErrorResponse, customErrorResponse.getStatus());
     }
 }

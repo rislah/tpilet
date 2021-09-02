@@ -1,6 +1,9 @@
 package com.rislah.tpilet.company;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rislah.tpilet.dto.CompanyDto;
+import com.rislah.tpilet.model.Company;
+import com.rislah.tpilet.repository.CompanyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +44,7 @@ public class CompanyIntegrationTest {
         CompanyDto companyDto = getCompanyDto();
         assertThat(companyRepository.existsCompanyByName(companyDto.getName())).isFalse();
 
-        this.mockMvc.perform(post("/companies")
+        this.mockMvc.perform(post("/api/companies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(companyDto)))
                 .andExpect(status().isCreated());

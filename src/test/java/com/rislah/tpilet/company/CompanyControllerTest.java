@@ -1,6 +1,11 @@
 package com.rislah.tpilet.company;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rislah.tpilet.controller.CompanyController;
+import com.rislah.tpilet.dto.CompanyDto;
+import com.rislah.tpilet.mapper.CompanyMapper;
+import com.rislah.tpilet.model.Company;
+import com.rislah.tpilet.service.CompanyService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +38,12 @@ public class CompanyControllerTest {
     @Test
     void testAddCompanyIfMapsToBusinessModel() throws Exception {
         CompanyDto companyDto = getCompanyDto();
-        mockMvc.perform(post("/companies")
+        mockMvc.perform(post("/api/companies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(companyDto))).andExpect(status().isCreated());
 
-        ArgumentCaptor<Company> companyCaptor = ArgumentCaptor.forClass(Company.class);
-        verify(companyService, times(1)).addCompany(companyCaptor.capture());
+        ArgumentCaptor<CompanyDto> companyCaptor = ArgumentCaptor.forClass(CompanyDto.class);
+        verify(companyService, times(1)).create(companyCaptor.capture());
 
         assertThat(companyCaptor.getValue().getEmail()).isEqualTo(companyDto.getEmail());
         assertThat(companyCaptor.getValue().getName()).isEqualTo(companyDto.getName());
@@ -48,7 +53,7 @@ public class CompanyControllerTest {
     @Test
     void testAddCompanyIfSuccess() throws Exception {
         CompanyDto companyDto = getCompanyDto();
-        mockMvc.perform(post("/companies")
+        mockMvc.perform(post("/api/companies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(companyDto))).andExpect(status().isCreated());
     }
@@ -58,7 +63,7 @@ public class CompanyControllerTest {
         CompanyDto companyDto = getCompanyDto();
         companyDto.setName("");
 
-        mockMvc.perform(post("/companies")
+        mockMvc.perform(post("/api/companies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(companyDto)))
                 .andExpect(status().isBadRequest())
@@ -70,7 +75,7 @@ public class CompanyControllerTest {
         CompanyDto companyDto = getCompanyDto();
         companyDto.setName(null);
 
-        mockMvc.perform(post("/companies")
+        mockMvc.perform(post("/api/companies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(companyDto)))
                 .andExpect(status().isBadRequest())
@@ -82,7 +87,7 @@ public class CompanyControllerTest {
         CompanyDto companyDto = getCompanyDto();
         companyDto.setName("asd");
 
-        mockMvc.perform(post("/companies")
+        mockMvc.perform(post("/api/companies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(companyDto))
                 .characterEncoding("utf-8"))
@@ -95,7 +100,7 @@ public class CompanyControllerTest {
         CompanyDto companyDto = getCompanyDto();
         companyDto.setEmail("asdasdasd");
 
-        mockMvc.perform(post("/companies")
+        mockMvc.perform(post("/api/companies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(companyDto))
                 .characterEncoding("utf-8"))
@@ -108,7 +113,7 @@ public class CompanyControllerTest {
         CompanyDto companyDto = getCompanyDto();
         companyDto.setEmail(null);
 
-        mockMvc.perform(post("/companies")
+        mockMvc.perform(post("/api/companies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(companyDto))
                 .characterEncoding("utf-8"))

@@ -2,6 +2,9 @@ package com.rislah.tpilet.location;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rislah.tpilet.dto.LocationDto;
+import com.rislah.tpilet.model.Location;
+import com.rislah.tpilet.repository.LocationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +48,7 @@ public class LocationIntegrationTest {
         locationDto.setName("Tallinn");
         assertThat(locationRepository.existsByName(locationDto.getName())).isFalse();
 
-        this.mockMvc.perform(post("/locations")
+        this.mockMvc.perform(post("/api/locations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(locationDto)))
                 .andExpect(status().isCreated());
@@ -62,7 +65,7 @@ public class LocationIntegrationTest {
 
         String searchQuery = location.getName().substring(0, location.getName().length() - 3);
 
-        MvcResult mvcResult = this.mockMvc.perform(get("/locations")
+        MvcResult mvcResult = this.mockMvc.perform(get("/api/locations")
                 .param("q", searchQuery)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

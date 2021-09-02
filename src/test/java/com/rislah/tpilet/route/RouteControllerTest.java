@@ -1,7 +1,12 @@
 package com.rislah.tpilet.route;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rislah.tpilet.bus.BusMapper;
+import com.rislah.tpilet.mapper.BusMapper;
+import com.rislah.tpilet.controller.RouteController;
+import com.rislah.tpilet.dto.RouteDto;
+import com.rislah.tpilet.mapper.RouteMapper;
+import com.rislah.tpilet.model.Route;
+import com.rislah.tpilet.service.RouteService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,14 +42,14 @@ public class RouteControllerTest {
     void TestAddRouteIfMapsToBusinessModel() throws Exception {
         RouteDto routeDto = getRouteDto();
 
-        mockMvc.perform(post("/routes")
+        mockMvc.perform(post("/api/routes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(routeDto)));
 
-        ArgumentCaptor<Route> routeArgumentCaptor = ArgumentCaptor.forClass(Route.class);
-        verify(routeService, times(1)).addRoute(routeArgumentCaptor.capture());
+        ArgumentCaptor<RouteDto> routeArgumentCaptor = ArgumentCaptor.forClass(RouteDto.class);
+        verify(routeService, times(1)).create(routeArgumentCaptor.capture());
 
-        Route route = routeArgumentCaptor.getValue();
+        RouteDto route = routeArgumentCaptor.getValue();
         assertThat(route.getBusId()).isEqualTo(routeDto.getBusId());
         assertThat(route.getArrivalDate()).isEqualTo(routeDto.getArrivalDate());
         assertThat(route.getDepartureDate()).isEqualTo(routeDto.getDepartureDate());
@@ -54,7 +59,7 @@ public class RouteControllerTest {
     @Test
     void TestAddRouteIfSuccess() throws Exception {
         RouteDto routeDto = getRouteDto();
-        mockMvc.perform(post("/routes")
+        mockMvc.perform(post("/api/routes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(routeDto)))
                 .andExpect(status().isCreated());
@@ -65,7 +70,7 @@ public class RouteControllerTest {
         RouteDto routeDto = getRouteDto();
         routeDto.setBusId(-1);
 
-        mockMvc.perform(post("/routes")
+        mockMvc.perform(post("/api/routes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(routeDto)))
                 .andExpect(status().isBadRequest())
@@ -83,7 +88,7 @@ public class RouteControllerTest {
                 .price(new BigDecimal("12.22"))
                 .build();
 
-        mockMvc.perform(post("/routes")
+        mockMvc.perform(post("/api/routes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(routeDto)))
                 .andExpect(status().isBadRequest())
@@ -101,7 +106,7 @@ public class RouteControllerTest {
                 .price(new BigDecimal("12.22"))
                 .build();
 
-        mockMvc.perform(post("/routes")
+        mockMvc.perform(post("/api/routes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(routeDto)))
                 .andExpect(status().isBadRequest())
@@ -119,7 +124,7 @@ public class RouteControllerTest {
                 .price(new BigDecimal("12.22"))
                 .build();
 
-        mockMvc.perform(post("/routes")
+        mockMvc.perform(post("/api/routes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(routeDto)))
                 .andExpect(status().isBadRequest())
@@ -137,7 +142,7 @@ public class RouteControllerTest {
                 .price(new BigDecimal("12.22"))
                 .build();
 
-        mockMvc.perform(post("/routes")
+        mockMvc.perform(post("/api/routes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(routeDto)))
                 .andExpect(status().isBadRequest())

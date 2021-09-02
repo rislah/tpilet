@@ -1,6 +1,11 @@
 package com.rislah.tpilet.location;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rislah.tpilet.controller.LocationController;
+import com.rislah.tpilet.dto.LocationDto;
+import com.rislah.tpilet.mapper.LocationMapper;
+import com.rislah.tpilet.model.Location;
+import com.rislah.tpilet.service.LocationService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,18 +48,18 @@ public class LocationControllerTests {
                 .andExpect(status().isOk());
 
         ArgumentCaptor<String> locationArgumentCaptor = ArgumentCaptor.forClass(String.class);
-        verify(locationService, times(1)).searchLocationByName(locationArgumentCaptor.capture());
+        verify(locationService, times(1)).findLocationsByName(locationArgumentCaptor.capture());
 
         assertThat(locationDto.getName()).isEqualTo(locationArgumentCaptor.getValue());
     }
 
     @Test
     void testSearchLocationByNameIfSuccess() throws Exception {
-        Location location = getLocation();
-        List<Location> locations = new ArrayList<>();
+        LocationDto location = getLocationDto();
+        List<LocationDto> locations = new ArrayList<>();
         locations.add(location);
 
-        when(locationService.searchLocationByName(location.getName())).thenReturn(locations);
+        when(locationService.findLocationsByName(location.getName())).thenReturn(locations);
 
         mockMvc.perform(get("/locations")
                 .param("q", location.getName())
@@ -68,11 +73,4 @@ public class LocationControllerTests {
                 .name("Tartu bussijaam")
                 .build();
     }
-
-    private Location getLocation() {
-        return Location.builder()
-                .name("Tartu bussijaam")
-                .build();
-    }
-
 }

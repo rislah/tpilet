@@ -1,6 +1,11 @@
 package com.rislah.tpilet.bus;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rislah.tpilet.controller.BusController;
+import com.rislah.tpilet.dto.BusDto;
+import com.rislah.tpilet.mapper.BusMapper;
+import com.rislah.tpilet.model.Bus;
+import com.rislah.tpilet.service.BusService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +38,13 @@ public class BusControllerTest {
     @Test
     void testAddBusIfMapsToBusinessModel() throws Exception {
         BusDto busDto = getBusDto();
-        mockMvc.perform(post("/buses")
+        mockMvc.perform(post("/api/buses")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(busDto)))
                 .andExpect(status().isCreated());
 
-        ArgumentCaptor<Bus> busArgumentCaptor = ArgumentCaptor.forClass(Bus.class);
-        verify(busService, times(1)).addBus(busArgumentCaptor.capture());
+        ArgumentCaptor<BusDto> busArgumentCaptor = ArgumentCaptor.forClass(BusDto.class);
+        verify(busService, times(1)).create(busArgumentCaptor.capture());
 
         assertThat(busArgumentCaptor.getValue().getNumber()).isEqualTo(busDto.getNumber());
     }
@@ -48,7 +53,7 @@ public class BusControllerTest {
     void testAddBusIfCompanyIdNegative() throws Exception {
         BusDto busDto = getBusDto();
         busDto.setCompanyId(-1);
-        mockMvc.perform(post("/buses")
+        mockMvc.perform(post("/api/buses")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(busDto)))
                 .andExpect(status().isBadRequest())
