@@ -13,12 +13,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import static com.rislah.tpilet.ResponseBodyMatchers.responseBody;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = {CompanyController.class, CompanyMapper.class})
@@ -67,7 +70,13 @@ public class CompanyControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(companyDto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(responseBody().containsValidationError("name", "must not be blank"));
+                .andExpect(jsonPath("code").value("VALIDATION_FAILED"))
+                .andExpect(jsonPath("fieldErrors", hasSize(2)))
+                .andExpect(jsonPath("fieldErrors..property", allOf(hasItem("name"))))
+                .andExpect(jsonPath("fieldErrors..message", allOf(hasItem("must not be blank"))))
+                .andExpect(jsonPath("fieldErrors..property", allOf(hasItem("name"))))
+                .andExpect(jsonPath("fieldErrors..message", allOf(hasItem("length must be between 4 and 100"))));
+
     }
 
     @Test
@@ -79,7 +88,9 @@ public class CompanyControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(companyDto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(responseBody().containsValidationError("name", "must not be blank"));
+                .andExpect(jsonPath("fieldErrors", hasSize(1)))
+                .andExpect(jsonPath("fieldErrors..property", allOf(hasItem("name"))))
+                .andExpect(jsonPath("fieldErrors..message", allOf(hasItem("must not be blank"))));
     }
 
     @Test
@@ -92,7 +103,9 @@ public class CompanyControllerTest {
                 .content(objectMapper.writeValueAsString(companyDto))
                 .characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest())
-                .andExpect(responseBody().containsValidationError("name", "length must be between 4 and 100"));
+                .andExpect(jsonPath("fieldErrors", hasSize(1)))
+                .andExpect(jsonPath("fieldErrors..property", allOf(hasItem("name"))))
+                .andExpect(jsonPath("fieldErrors..message", allOf(hasItem("length must be between 4 and 100"))));
     }
 
     @Test
@@ -105,7 +118,9 @@ public class CompanyControllerTest {
                 .content(objectMapper.writeValueAsString(companyDto))
                 .characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest())
-                .andExpect(responseBody().containsValidationError("email", "must be a well-formed email address"));
+                .andExpect(jsonPath("fieldErrors", hasSize(1)))
+                .andExpect(jsonPath("fieldErrors..property", allOf(hasItem("email"))))
+                .andExpect(jsonPath("fieldErrors..message", allOf(hasItem("must be a well-formed email address"))));
     }
 
     @Test
@@ -118,7 +133,9 @@ public class CompanyControllerTest {
                 .content(objectMapper.writeValueAsString(companyDto))
                 .characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest())
-                .andExpect(responseBody().containsValidationError("email", "must not be null"));
+                .andExpect(jsonPath("fieldErrors", hasSize(1)))
+                .andExpect(jsonPath("fieldErrors..property", allOf(hasItem("email"))))
+                .andExpect(jsonPath("fieldErrors..message", allOf(hasItem("must not be null"))));
     }
 
     private CompanyDto getCompanyDto() {

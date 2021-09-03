@@ -13,12 +13,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
+import static org.hamcrest.Matchers.*;
 import static com.rislah.tpilet.ResponseBodyMatchers.responseBody;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = {BusController.class, BusMapper.class})
@@ -57,20 +59,24 @@ public class BusControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(busDto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(responseBody().containsValidationError("companyId",
-                        "must be greater than or equal to 0"));
+                .andExpect(jsonPath("code").value("VALIDATION_FAILED"))
+                .andExpect(jsonPath("fieldErrors", hasSize(1)))
+                .andExpect(jsonPath("fieldErrors..property", allOf(hasItem("companyId"))))
+                .andExpect(jsonPath("fieldErrors..message", allOf(hasItem("must be greater than or equal to 0"))));
     }
 
     @Test
     void testAddBusIfNumberNegative() throws Exception {
         BusDto busDto = getBusDto();
         busDto.setNumber(-1);
-        mockMvc.perform(post("/buses")
+        mockMvc.perform(post("/api/buses")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(busDto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(responseBody().containsValidationError("number",
-                        "must be greater than or equal to 0"));
+                .andExpect(jsonPath("code").value("VALIDATION_FAILED"))
+                .andExpect(jsonPath("fieldErrors", hasSize(1)))
+                .andExpect(jsonPath("fieldErrors..property", allOf(hasItem("number"))))
+                .andExpect(jsonPath("fieldErrors..message", allOf(hasItem("must be greater than or equal to 0"))));
     }
 
     private BusDto getBusDto() {

@@ -3,6 +3,7 @@ package com.rislah.tpilet.service;
 import com.rislah.tpilet.dto.LocationDto;
 import com.rislah.tpilet.error.NotFoundException;
 import com.rislah.tpilet.error.RecordAlreadyExistsException;
+import com.rislah.tpilet.exception.LocationExistsException;
 import com.rislah.tpilet.exception.LocationNotFoundException;
 import com.rislah.tpilet.mapper.LocationMapper;
 import com.rislah.tpilet.model.Location;
@@ -28,7 +29,7 @@ public class LocationService {
     @Transactional
     public LocationDto create(LocationDto dto) {
         if (repository.existsByName(dto.getName())) {
-            throw new RecordAlreadyExistsException("Location already exists");
+            throw new LocationExistsException();
         }
         Location location = mapper.locationDtoToLocation(dto);
         repository.saveAndFlush(location);

@@ -42,7 +42,7 @@ public class LocationControllerTests {
     @Test
     void testSearchLocationByNameIfMapsToBusinessModel() throws Exception {
         LocationDto locationDto = getLocationDto();
-        mockMvc.perform(get("/locations")
+        mockMvc.perform(get("/api/locations")
                 .param("q", locationDto.getName())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -61,7 +61,7 @@ public class LocationControllerTests {
 
         when(locationService.findLocationsByName(location.getName())).thenReturn(locations);
 
-        mockMvc.perform(get("/locations")
+        mockMvc.perform(get("/api/locations")
                 .param("q", location.getName())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

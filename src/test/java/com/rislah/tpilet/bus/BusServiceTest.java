@@ -2,6 +2,7 @@ package com.rislah.tpilet.bus;
 
 import com.rislah.tpilet.dto.BusDto;
 import com.rislah.tpilet.error.RecordAlreadyExistsException;
+import com.rislah.tpilet.exception.BusExistsException;
 import com.rislah.tpilet.model.Bus;
 import com.rislah.tpilet.repository.BusRepository;
 import com.rislah.tpilet.service.BusService;
@@ -25,7 +26,7 @@ public class BusServiceTest {
     void testAddBusIfBusAlreadyExists() {
         BusDto bus = getBusDto();
         when(busRepository.existsBusByNumber(bus.getNumber())).thenReturn(true);
-        assertThrows(RecordAlreadyExistsException.class, () -> {
+        assertThrows(BusExistsException.class, () -> {
             busService.create(bus);
         });
     }

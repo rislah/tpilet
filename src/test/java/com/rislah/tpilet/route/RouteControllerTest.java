@@ -19,9 +19,11 @@ import java.math.BigDecimal;
 
 import static com.rislah.tpilet.ResponseBodyMatchers.responseBody;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = {RouteController.class, RouteMapper.class, BusMapper.class})
@@ -74,7 +76,9 @@ public class RouteControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(routeDto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(responseBody().containsValidationError("busId", "must be greater than or equal to 0"));
+                .andExpect(jsonPath("fieldErrors", hasSize(1)))
+                .andExpect(jsonPath("fieldErrors..property", allOf(hasItem("busId"))))
+                .andExpect(jsonPath("fieldErrors..message", allOf(hasItem("must be greater than or equal to 0"))));
     }
 
     @Test
@@ -92,7 +96,9 @@ public class RouteControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(routeDto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(responseBody().containsValidationError("to", "length must be between 4 and 100"));
+                .andExpect(jsonPath("fieldErrors", hasSize(1)))
+                .andExpect(jsonPath("fieldErrors..property", allOf(hasItem("to"))))
+                .andExpect(jsonPath("fieldErrors..message", allOf(hasItem("length must be between 4 and 100"))));
     }
 
     @Test
@@ -110,7 +116,9 @@ public class RouteControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(routeDto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(responseBody().containsValidationError("to", "must not be blank"));
+                .andExpect(jsonPath("fieldErrors", hasSize(1)))
+                .andExpect(jsonPath("fieldErrors..property", allOf(hasItem("to"))))
+                .andExpect(jsonPath("fieldErrors..message", allOf(hasItem("must not be blank"))));
     }
 
     @Test
@@ -128,7 +136,9 @@ public class RouteControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(routeDto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(responseBody().containsValidationError("from", "length must be between 4 and 100"));
+                .andExpect(jsonPath("fieldErrors", hasSize(1)))
+                .andExpect(jsonPath("fieldErrors..property", allOf(hasItem("from"))))
+                .andExpect(jsonPath("fieldErrors..message", allOf(hasItem("length must be between 4 and 100"))));
     }
 
     @Test
@@ -146,7 +156,9 @@ public class RouteControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(routeDto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(responseBody().containsValidationError("from", "must not be blank"));
+                .andExpect(jsonPath("fieldErrors", hasSize(1)))
+                .andExpect(jsonPath("fieldErrors..property", allOf(hasItem("from"))))
+                .andExpect(jsonPath("fieldErrors..message", allOf(hasItem("must not be blank"))));
     }
 
     private RouteDto getRouteDto() {
