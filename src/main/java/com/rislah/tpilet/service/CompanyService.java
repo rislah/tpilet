@@ -45,7 +45,7 @@ public class CompanyService {
         return companies;
     }
 
-//    public List<Company> findAllCompaniesAndBuses() {
-//        return companyRepository.findAllWithBuses();
-//    }
+    public List<CompanyDto> findAllCompaniesAndBuses() {
+        return repository.findAllWithBuses().stream().map(mapper::companyToCompanyDto).toList();
+    }
 }

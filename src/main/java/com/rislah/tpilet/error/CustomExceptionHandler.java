@@ -16,10 +16,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.time.DateTimeException;
 import java.util.ArrayList;
 import java.util.List;
 
-//@ControllerAdvice
+@ControllerAdvice
 @Slf4j
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
@@ -74,6 +75,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> handleNotFound(NotFoundException ex) {
         CustomErrorResponse customErrorResponse = new CustomErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+        return buildError(customErrorResponse);
+    }
+
+    @ExceptionHandler({DateTimeException.class})
+    public ResponseEntity<Object> handleDateTimeException(Exception ex, WebRequest request) {
+        CustomErrorResponse customErrorResponse = new CustomErrorResponse(HttpStatus.BAD_REQUEST, "Parsing error", ex);
         return buildError(customErrorResponse);
     }
 

@@ -41,11 +41,11 @@ public class Bus {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "bus")
     private Set<Route> routes;
 
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(number);
-//    }
-//
+    @Override
+    public int hashCode() {
+        return Objects.hash(number);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

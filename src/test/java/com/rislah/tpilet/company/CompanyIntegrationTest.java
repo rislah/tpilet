@@ -23,16 +23,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 @ActiveProfiles("test")
 public class CompanyIntegrationTest {
-    @Autowired
     private WebApplicationContext webApplicationContext;
-
-    @Autowired
     private CompanyRepository companyRepository;
+    private ObjectMapper objectMapper;
+    private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    private MockMvc mockMvc;
+    public CompanyIntegrationTest(WebApplicationContext webApplicationContext, CompanyRepository companyRepository, ObjectMapper objectMapper) {
+        this.webApplicationContext = webApplicationContext;
+        this.companyRepository = companyRepository;
+        this.objectMapper = objectMapper;
+    }
 
     @BeforeEach
     void setUp() {
@@ -45,8 +46,8 @@ public class CompanyIntegrationTest {
         assertThat(companyRepository.existsCompanyByName(companyDto.getName())).isFalse();
 
         this.mockMvc.perform(post("/api/companies")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(companyDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(companyDto)))
                 .andExpect(status().isCreated());
 
         assertThat(companyRepository.existsCompanyByName(companyDto.getName())).isTrue();

@@ -36,3 +36,9 @@ CREATE TABLE Routes
     FOREIGN KEY (location_to_id) REFERENCES Locations (id),
     FOREIGN KEY (bus_id) REFERENCES Buses (id)
 )
+
+CREATE TABLE Users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(100),
+    password VARCHAR(100)
+)
